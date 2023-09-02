@@ -9,6 +9,8 @@ async function createApolloGraphqlServer() {
     const qlServer = new ApolloServer({
         typeDefs:
         `
+            scalar Upload
+
             type serverResponse {
                 success: Boolean!
                 data: String!
@@ -35,6 +37,7 @@ async function createApolloGraphqlServer() {
     })
 
     await qlServer.start();
+
 
     return qlServer
 }

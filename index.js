@@ -4,6 +4,7 @@ import createApolloGraphqlServer from "./graph/index.js"
 import { expressMiddleware } from "@apollo/server/express4";
 import dotenv from "dotenv"
 import mongoose from "mongoose"
+import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs"
 
 async function init()
 {
@@ -13,6 +14,7 @@ async function init()
     dotenv.config()
     app.use(express.json())
     app.use(cors())
+
 
     app.get("/", (req, res) => {
         res.json({ message: "Server is up and running" });
@@ -24,7 +26,9 @@ async function init()
     .catch(() => console.log("Some error occured "))
 
     // setting up the graphql server
+    app.use(graphqlUploadExpress())
     app.use("/graphql",expressMiddleware(await createApolloGraphqlServer()))
+    
 
     // starting the server
     app.listen(PORT , () => `Server is Running at PORT : ${8000}`)
