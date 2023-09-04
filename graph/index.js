@@ -9,6 +9,8 @@ async function createApolloGraphqlServer() {
     const qlServer = new ApolloServer({
         typeDefs:
         `
+            ${Auth.typeDefs}
+            
             scalar Upload
 
             type serverResponse {
@@ -34,7 +36,7 @@ async function createApolloGraphqlServer() {
                ...Auth.resolvers.mutations
             }
         }
-    })
+    },)
 
     await qlServer.start();
 

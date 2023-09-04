@@ -5,6 +5,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs"
+import {decodeTokenAndFetchUser} from "./contexts/auth.js"
 
 async function init()
 {
@@ -27,7 +28,11 @@ async function init()
 
     // setting up the graphql server
     app.use(graphqlUploadExpress())
-    app.use("/graphql",expressMiddleware(await createApolloGraphqlServer()))
+    app.use("/graphql",expressMiddleware(await createApolloGraphqlServer(), 
+                    {
+                        context: decodeTokenAndFetchUser
+                    }
+            ))
     
 
     // starting the server

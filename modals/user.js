@@ -38,6 +38,7 @@ const workExperienceSchema = new Schema({
         type: String
     }]
 })
+
 const WorkExperience = mongoose.model("WorkExperience",workExperienceSchema)
 
 // DESC: collection schema to store Certificate
