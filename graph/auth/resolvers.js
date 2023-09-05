@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { User, Education, WorkExperience } from "../../modals/user.js";
+import { User, Education, WorkExperience , Certificate} from "../../modals/user.js";
 import { sendMail} from "../../utils/helper.js"
-import { createUploadStream } from "../../utils/helper.js";
+import { createUploadStream,deleteFileFromS3 } from "../../utils/helper.js";
 import {uid} from "uid"
 
 const queries = {
@@ -39,6 +39,7 @@ const queries = {
   // read
   getEducation: async (parent, {},contextValue) => {
      // check if request is logged in or not
+   
      if(!contextValue || !contextValue.user)
      {
        return {success: false,data:"Request Not Authenticatd"}
@@ -76,8 +77,48 @@ const queries = {
     {
      return {success: false,data: err.message}
     }
-  }
+  },
 
+   // ############# CERTIFICATES RESOLVERS ###########
+
+  getCertificate: async (parent,{},contextValue) => {
+      // check if request is logged in or not
+      if(!contextValue || !contextValue.user)
+      {
+        return {success: false,data:"Request Not Authenticatd"}
+      }
+
+      try {
+
+        let certificates = await Certificate.find({user: contextValue.user._id})
+        return {success: true,data:"Fetched success",certificates}
+   
+       }
+       catch(err)
+       {
+        return {success: false,data: err.message}
+      }
+
+  },
+
+  getUser: async (parent,{},contextValue) => {
+     // check if request is logged in or not
+     if(!contextValue || !contextValue.user)
+     {
+       return {success: false}
+     }
+
+     try 
+     {
+       let user = await User.findById(contextValue.user._id)
+  
+       return user
+     }
+     catch(err)
+     {
+      return {success: false}
+     }
+  }
 
 };
 
@@ -400,8 +441,182 @@ const mutations = {
 
   },
 
+ // ############# EDIT BIO SECTION RESOLVERS ###########
+  editBioSection: async (parent,{bio, key_skills, facebook, twitter, instagram, linkedIn, github, website, youtube},contextValue) => {
+    // check if request is logged in or not
+    if(!contextValue || !contextValue.user)
+    {
+      return {success: false,data:"Request Not Authenticatd"}
+    }
+    try
+    {
+      await  User.findByIdAndUpdate(contextValue.user._id, {bio,key_skills,social_profiles: {
+        facebook,twitter,instagram,linkedIn,github,website,youtube
+      }})
 
+      return {success: true, data:"Detials Updated"}
+   
+    }
+    catch(err)
+    {
+      return {success: false, data:err.message}
+    }
+  } ,
 
+  // ############# CERTIFICATES RESOLVERS ###########
+
+  // create
+  addCertificate: async (parent,{file, name, university},contextValue) => {
+
+     // check if request is logged in or not
+    if(!contextValue || !contextValue.user)
+    {
+      return {success: false,data:"Request Not Authenticatd"}
+    }
+
+    try
+    {
+      // try to upload file over aws first
+      const { file: data } = await file;
+      const { filename, createReadStream } = data;
+      const stream =   createReadStream();
+      const uploadStream = createUploadStream(uid() + filename);
+      stream.pipe(uploadStream.writeStream);
+      let result  = await uploadStream.promise;
+      // now create certificate
+      let certificate = new Certificate({name,institute: university, user: contextValue.user._id})
+      certificate.file = {
+                originalname: data.filename,
+                encoding: data.encoding,
+                mimetype: data.mimetype,
+                key: result.Key,
+                location: result.Location,
+                etag: result.ETag
+      }
+
+      await certificate.save()
+      return {success: true,data:"Certificate Added"}
+
+    }
+    catch(err)
+    {
+      return {success: false,data:err.message}
+    }
+  },
+
+  // delete
+  deleteCertificate: async (parent,{certId},contextValue) => {
+
+     // check if request is logged in or not
+     if(!contextValue || !contextValue.user)
+     {
+       return {success: false,data:"Request Not Authenticatd"}
+     }
+
+     try
+     {
+      let certificate = await Certificate.findOne({_id:certId, user: contextValue.user._id})
+      if(!certificate)
+        return {success: false,data:"Invalid Resource"}
+
+      // if certificate exists first delete the file from aws
+      deleteFileFromS3(certificate.file.key)
+      await Certificate.findByIdAndDelete(certId)
+
+      return {success: true,data: "Deleted Successfully"}
+
+     }
+     catch(err)
+     {
+      return {success: false,data:err.message}
+     }
+
+  },
+
+   // ############# PERSONAL DETAILS RESOLVERS ###########
+  updatePersonalDetails: async (parent, {dob,physically_challenged,marital_status,gender},contextValue) => {
+
+    if(!contextValue || !contextValue.user)
+    {
+       return {success: false,data:"Request Not Authenticatd"}
+    }
+
+    try
+    {
+      let  user = await User.findById(contextValue.user._id)
+      if(!user)
+        return {success: false,data:"Invalid Request! Plese Login again"}
+    
+      user.gender = gender;
+      user.personal_details = {
+        dob,
+        physically_challenged,
+        marital_status
+      }
+      await user.save()
+      return {success: true,data:"Details Updated"}
+      
+    }
+    catch(err)
+    {
+      return {success: false,data:err.message}
+    }
+  },
+
+  uploadResume: async (parent,{file},contextValue ) => {
+
+    if(!contextValue || !contextValue.user)
+    {
+       return {success: false,data:"Request Not Authenticatd"}
+    }
+
+    try
+    {
+      let user = await User.findById(contextValue.user._id)
+      if(!user)
+        return {success: false,data:"Invalid Request! Plese Login again"}
+      
+      // Upload the new Resume over the aws
+      const { file: data } = await file;
+      const { filename, createReadStream } = data;
+      const stream =   createReadStream();
+      const uploadStream = createUploadStream(uid() + filename);
+      stream.pipe(uploadStream.writeStream);
+      let result  = await uploadStream.promise;
+      let fileDetails = {
+        originalname: data.filename,
+        encoding: data.encoding,
+        mimetype: data.mimetype,
+        key: result.Key,
+        location: result.Location,
+        etag: result.ETag
+      } 
+
+      // delete old resume  from aws if exits 
+      if(user.resume && user.resume.key)
+      {
+        deleteFileFromS3(user.resume.key)
+      }
+
+      // update user with new resume
+      user.resume = fileDetails
+      await user.save()
+      return {success: true,data: "Resume Updated"}
+
+    }
+    catch(err)
+    {
+      return {success: false,data:err.message}
+    }
+
+  }
 };
 
-export const resolvers = { queries, mutations };
+const userResolvers = {
+  education: async (parent,{user},contextValue) =>  ( await queries.getEducation(parent,{user},contextValue)).educations,
+  experience: async (parent,{user},contextValue) =>  ( await queries.getExperience(parent,{user},contextValue)).experiences,
+  certificates: async (parent,{user},contextValue) =>  ( await queries.getCertificate(parent,{user},contextValue)).certificates
+  
+}
+
+export const resolvers = { queries, mutations,userResolvers };

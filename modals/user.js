@@ -43,9 +43,23 @@ const WorkExperience = mongoose.model("WorkExperience",workExperienceSchema)
 
 // DESC: collection schema to store Certificate
 const certificateSchema = new Schema({
+    user: Schema.Types.ObjectId,
     name: String,
     institute: String,
-    certificate: String
+    file: {
+        originalname: String,
+        encoding: String,
+        mimetype: String,
+        key: String,
+        location: {
+            type: String,
+            required: true
+        },
+        etag: {
+            type: String,
+            required: true
+        }
+    },
 })
 const Certificate = mongoose.model("Certificate",certificateSchema)
 
@@ -76,7 +90,6 @@ const userSchema = new Schema({
         originalname: String,
         encoding: String,
         mimetype: String,
-        size: Number,
         key: String,
         location: {
             type: String,

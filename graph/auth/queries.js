@@ -4,9 +4,10 @@ export const queries =
 
 login(email: String!, password: String!): serverResponse
 
-############ EDUCATION Queries ############
 
 getEducation: EducationOutput
 getExperience: ExperienceOutput
+getCertificate: CertificateOutput
+getUser: User
 
 `

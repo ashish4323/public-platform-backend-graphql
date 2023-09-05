@@ -93,18 +93,32 @@ type ExperienceOutput {
     experiences: [ExperienceO]
 }
 
-
-########### USER #################
-
-type Resume {
+type file {
     originalname: String,
     encoding: String,
     mimetype: String,
-    size: Int,
     key: String,
     location: String
     etag: String
 }
+
+########### CERTIFICATES #################
+type certificate {
+    _id : String!
+    user: String!
+    name: String!
+    institute: String!
+    file: file
+}
+
+type CertificateOutput {
+    success: Boolean!
+    data: String!
+    certificates: [certificate]
+}
+########### USER #################
+
+
 type Current_Employment {
     currently_employed: Boolean
     company: String
@@ -142,13 +156,14 @@ type PersonalDetails {
 }
 
 type User {
+
     _id: String
     first_name: String
     last_name: String
     email: String
     mobile_number: String
     work_status: String
-    resume: Resume
+    resume: file
     current_city: String
     preferred_location: String
     emailVerified: Boolean
@@ -162,6 +177,8 @@ type User {
     gender: String
     social_profiles: SocailProfiles
     personal_details: PersonalDetails
-
+    education: [EducationO]
+    experience: [ExperienceO]
+    certificates: [certificate]
 }
 `

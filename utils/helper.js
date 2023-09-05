@@ -53,5 +53,24 @@ const createUploadStream = (key) => {
 };
 
 
+// function to delete file from bucket
+// function to delete the file from aws s3
+const deleteFileFromS3 = (fileName) => {
 
-export {sendMail,bucket,s3,createUploadStream}
+  const params = {
+      Bucket: process.env.BUCKET_NAME_S3,
+      Key: fileName
+  }
+  // it is sure that file with given etag is present because all these detail are stored by fetching from aws only
+
+  s3.deleteObject(params,(err,data) => {
+      if (err) {
+          console.error('Error deleting object:', err);
+          return;
+      }
+      console.log('Object deleted:', data);
+  })
+}
+
+
+export {sendMail,bucket,s3,createUploadStream,deleteFileFromS3}

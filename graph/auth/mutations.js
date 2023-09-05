@@ -12,6 +12,9 @@ setupAccountThirdStep(bio: String!, gender: String!, currency: String!, amount: 
 
 addSocialUrls(facebook: String!, twitter: String!, instagram: String!, linkedIn: String!, github: String!, website: String!, youtube: String!): serverResponse
 
+############ BIO MUTATION ############
+editBioSection(bio: String!, key_skills: String!, facebook: String!, twitter: String!, instagram: String!, linkedIn: String!, github: String!, website: String!, youtube: String! ) : serverResponse
+
 ############ EDUCATION MUTATIONS ############
 
 addEducation(data: Education!) : serverResponse
@@ -23,5 +26,14 @@ addExperience(data: ExperienceI!): serverResponse
 updateExperience(data: ExperienceI!,expId: String!): serverResponse
 deleteExperience(expId: String!): serverResponse
 
+
+############ CERTIFICATES MUTATIONS ############
+addCertificate(file: Upload!, name: String!, university: String!): serverResponse
+deleteCertificate(certId: String!): serverResponse
+
+############ PERSONAL DETAILS MUTATION ############
+updatePersonalDetails(dob: String!,physically_challenged: Boolean!, marital_status: String!, gender: String!): serverResponse
+
+uploadResume(file: Upload!): serverResponse
 
 `

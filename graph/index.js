@@ -29,6 +29,9 @@ async function createApolloGraphqlServer() {
         `,
         resolvers:
         {
+            User: {
+                ...Auth.resolvers.userResolvers
+            },
             Query : {
                 ...Auth.resolvers.queries
             },
