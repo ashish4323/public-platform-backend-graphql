@@ -2,6 +2,7 @@ import { ApolloServer } from "@apollo/server";
 
 // importing the ql utils
 import {Auth} from "./auth/index.js"
+import {Connection} from "./connection/index.js"
 
 // creating graphql apolo server and exporting so that can be linked withe express server
 async function createApolloGraphqlServer() {
@@ -10,6 +11,7 @@ async function createApolloGraphqlServer() {
         typeDefs:
         `
             ${Auth.typeDefs}
+            ${Connection.typedef}
             
             scalar Upload
 
@@ -21,10 +23,12 @@ async function createApolloGraphqlServer() {
 
             type Query {
                 ${Auth.queries}
+                ${Connection.queries}
             }
 
             type Mutation {
                ${Auth.mutations}
+               ${Connection.mutations}
             }
         `,
         resolvers:
@@ -33,10 +37,12 @@ async function createApolloGraphqlServer() {
                 ...Auth.resolvers.userResolvers
             },
             Query : {
-                ...Auth.resolvers.queries
+                ...Auth.resolvers.queries,
+                ...Connection.resolvers.queries
             },
             Mutation: {
-               ...Auth.resolvers.mutations
+               ...Auth.resolvers.mutations,
+               ...Connection.resolvers.mutations
             }
         }
     },)
