@@ -15,11 +15,11 @@ const connectionSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'PPUser'
     },
-    status: {
+    status: 
+    {
         type: String,
         enum: ["accepted","rejected","pending"],
         default:"pending"
-
     }
 })
 

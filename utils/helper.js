@@ -6,8 +6,8 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-// helper to send an email
-const sendMail = async (htmlBody,subject,to) => {
+// helper to send an email using NodeMailer
+const sendMailNodeMailer = async (htmlBody,subject,to) => {
     const transportar = nodemailer.createTransport({
         service:"gmail",
         auth: {
@@ -52,8 +52,6 @@ const createUploadStream = (key) => {
     };
 };
 
-
-// function to delete file from bucket
 // function to delete the file from aws s3
 const deleteFileFromS3 = (fileName) => {
 
@@ -73,4 +71,6 @@ const deleteFileFromS3 = (fileName) => {
 }
 
 
-export {sendMail,bucket,s3,createUploadStream,deleteFileFromS3}
+
+
+export {sendMailNodeMailer,bucket,s3,createUploadStream,deleteFileFromS3}

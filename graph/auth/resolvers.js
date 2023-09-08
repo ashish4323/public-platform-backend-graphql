@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { User, Education, WorkExperience , Certificate} from "../../modals/user.js";
-import { sendMail} from "../../utils/helper.js"
+import { sendMailNodeMailer} from "../../utils/helper.js"
 import { createUploadStream,deleteFileFromS3 } from "../../utils/helper.js";
 import {uid} from "uid"
 
@@ -166,7 +166,8 @@ const mutations = {
                                 <p> Click on the following link to activate your account </p>
                                 <a href=${url}> Activate Account </a>` 
   
-        await sendMail(body,"Activate your Account !",email)
+
+        await sendMailNodeMailer(body,"Activate your Account !",email)
         // once everything is fine we will sent res
         return {success: true, data: "Account Activation link has been sent on provided email. Please activate your account to use services."}
         

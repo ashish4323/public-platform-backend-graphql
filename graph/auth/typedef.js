@@ -157,6 +157,10 @@ type PersonalDetails {
 
 type User {
 
+    # connectionId is so that when connection resolvers return the arrya of User we can also return the connection object mongodb id so that we can accept or reject it
+
+    connectionId: String
+
     _id: String
     first_name: String
     last_name: String

@@ -66,6 +66,7 @@ const Certificate = mongoose.model("Certificate",certificateSchema)
 
 // DESC: collection to store the user details
 const userSchema = new Schema({
+
     first_name: {
         type: String,
         required: true
@@ -113,7 +114,8 @@ const userSchema = new Schema({
     emailVerified: {
         type: Boolean,
         default: false,
-        required: true
+        required: true,
+        
     },
     accountSetupFinished: {
         type: Boolean,

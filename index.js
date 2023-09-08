@@ -7,6 +7,9 @@ import mongoose from "mongoose"
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs"
 import {decodeTokenAndFetchUser} from "./contexts/auth.js"
 
+
+
+
 async function init()
 {
     const app = express();
