@@ -1,0 +1,9 @@
+.sender {
+    text-align: right;
+    color: red;
+
+}
+.reveiver {
+    text-align: left;
+    color: blue;
+}
