@@ -1,5 +1,4 @@
-export const typeDefs = 
-`
+export const typeDefs = `
 ############## SignupSecondStepSchema #############
 
 input currEmployement {
@@ -129,12 +128,12 @@ type Total_Work_Experience {
     month: Int
 }
 type workDet {
-    start_date:String!
-    present_date: String!
+    start_date:String
+    present_date: String
     annual_salary: Int
-    availabe_to_join: String!
-    industry: String!
-    department: String!
+    availabe_to_join: String
+    industry: String
+    department: String
 }
 type Salary {
     currency: String
@@ -185,4 +184,4 @@ type User {
     experience: [ExperienceO]
     certificates: [certificate]
 }
-`
+`;
