@@ -29,7 +29,7 @@ async function init() {
 
   app.use(
     "/graphql",
-    cors({ origin: ["http://127.0.0.1:5173"] }),
+    cors(),
     graphqlUploadExpress(),
     expressMiddleware(await createApolloGraphqlServer(), {
       context: decodeTokenAndFetchUser,
