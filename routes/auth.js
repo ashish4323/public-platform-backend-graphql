@@ -28,19 +28,19 @@ router.get("/me", jwtAuthGuard, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (user === null) {
-      return res.json({
+      return res.status(404).json({
         success: false,
         message: "Failed to find user!",
       });
     }
 
-    return res.json({
+    return res.status(200).json({
       data: user,
       success: true,
       message: "User Found!",
     });
   } catch (err) {
-    return res.json({
+    return res.status(404).json({
       success: false,
       message: "Failed to find user!",
     });
