@@ -1,7 +1,9 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import jwtAuthGuard from "../middlewares/jwtGuard.js";
 const router = express.Router();
 import { User } from "../modals/user.js";
+
 router.get("/activate-email/:token", async (req, res) => {
   try {
     const token = req.params.token;
@@ -19,6 +21,29 @@ router.get("/activate-email/:token", async (req, res) => {
     } else return { success: false, data: "Link Expired!" };
   } catch (err) {
     return res.json({ success: false, data: err.message });
+  }
+});
+
+router.get("/me", jwtAuthGuard, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user === null) {
+      return res.json({
+        success: false,
+        message: "Failed to find user!",
+      });
+    }
+
+    return res.json({
+      data: user,
+      success: true,
+      message: "User Found!",
+    });
+  } catch (err) {
+    return res.json({
+      success: false,
+      message: "Failed to find user!",
+    });
   }
 });
 
