@@ -25,7 +25,7 @@ async function init() {
     .catch(() => console.log("Some error occured "));
 
   // set ting up the graphql server
-  app.use("/auth", authRouter);
+  app.use("/auth", cors(), authRouter);
 
   app.use(
     "/graphql",
