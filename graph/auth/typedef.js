@@ -109,7 +109,6 @@ type certificate {
     institute: String!
     file: file
 }
-
 type CertificateOutput {
     success: Boolean!
     data: String!
